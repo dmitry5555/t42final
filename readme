@@ -1,0 +1,68 @@
+== run
+make up / build / down
+or
+docker-compose -f ./docker-compose.yml up -d
+
+== use
+localhost:8000
+localhost:3000
+
+== back
+game/ws path: django / myapp / consumers.py
+
+работает на беке, возвращает 2 координаты на фронт (мяча)
+добавится координата соперника
+
+== front
+localhost:3000 -> websockets in menu
+canvas/ws path:
+next-js / components / New.js
+
+с фронта передается лишь 1 цифра с позицией X игрока
+
+https://circumeo.io/blog/entry/django-websockets/
+
+
+== db schema
+
+class Users(models.Model):
+	name = models.CharField(max_length=100)
+	email = models.EmailField(unique=True)
+	password = models.CharField(max_length=100, default='')
+	avatar = models.CharField(max_length=200, default='')
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+class Games(models.Model):
+	user_one_id = models.IntegerField()
+	user_two_id = models.IntegerField()
+	user_one_score = models.IntegerField()
+	user_two_score = models.IntegerField()
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+	status = models.CharField(max_length=100)
+
+============================================================================
+далее
+при входе выбор игры (передается параметром в компонент)
+	- игра с компом (добавить движение ракеткой 2)
+	- 1-1 на компе - ввод данных игроков (регистрация?)
+	- торнамент - получается просто ввод количества, ввод имен и игра по кругу
+	- 1-1 удаленно (ожидание 2го игрока в одном сокете, проверить третье соединение)
+
+
+
+===
+styles
+
+text screen
+w-96 py-4 mx-auto flex flex-col gap-2
+
+button
+border-2 py-2 px-4 mt-4 opacity-100 text-sm mx-auto
+
+input
+mx-auto gap-3 flex flex-col
+	flex flex-row items-center
+		w-1/2
+		w-1/2 px-2 py-1 text-black
