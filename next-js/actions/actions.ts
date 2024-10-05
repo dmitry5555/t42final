@@ -23,10 +23,10 @@ export const createUserGame = async (status: string) => {
         });
         if (response.ok) {
             const resp = await response.json();
-            console.log('resp ok: ', resp)
+            console.log('createUserGame resp ok: ', resp)
             return resp.id
         } else {
-            console.log('resp error : ', response)
+            console.log('createUserGameresp error : ', response)
         }
     } catch (error) {
         console.error('error: ', error);

@@ -259,8 +259,8 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 
 	useEffect(() => {
 
+		let roomId : number 
 		const fetchData = async () => {
-			let roomId : number
 			if (mode === 3) {
 				const data = await findPendingGame();
 				if (!data) {
@@ -270,13 +270,11 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 					console.log('pending game found: ', data);
 					console.log('adding user to game: ', data);
 					const success_added = await addUserToGame(data);
-					if (!success_added)
-						return 
+					if (!success_added) return 
 					roomId = data.id
 				}
-			}
-			else {
-				await createUserGame('single');
+			} else {
+				roomId = await createUserGame('single');
 			}
 
 			const client = new W3CWebSocket(`wss://localhost/ws/?mode=${mode}&room=${roomId}`);
@@ -305,6 +303,8 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 				}
 				if (score1 == 5 || score2 == 5) {
 					scoresUpdate(score1, score2);
+					console.log('preparing to closeUserGame - roomId, score1, score2: ', roomId, score1, score2);
+					closeUserGame(roomId, score1, score2)
 					client.close();
 				}
 				setScore1(score1);
@@ -316,7 +316,6 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 			};
 	
 			client.onclose = (event) => {
-				closeUserGame(roomId, score1, score2)
 				console.log('WebSocket Closed:', event);
 				console.log('Close code:', event.code);
 				console.log('Close reason:', event.reason);
@@ -326,8 +325,6 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 		};
 	
 		fetchData();
-
-		
 
 		// canvas
 		const canvas = canvasRef.current;
