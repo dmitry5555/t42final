@@ -124,12 +124,12 @@ export const getAllGames = async () => {
     }
 }
 
-export const closeUserGame = async (roomId: number, score1: number, score2: number) => {
+export const closeUserGame = async (roomId: number, status: string, score1: number, score2: number) => {
     const token = await getToken()
     // const payload = await getTokenPayload()
     try {
         const data = {
-            status: 'finished',
+            status: status,
             user_one_score: score1,
             user_two_score: score2,
         }

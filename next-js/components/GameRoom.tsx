@@ -303,19 +303,19 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 				}
 				if (score1 == 5 || score2 == 5) {
 					scoresUpdate(score1, score2);
-					console.log('preparing to closeUserGame - roomId, score1, score2: ', roomId, score1, score2);
-					closeUserGame(roomId, score1, score2)
 					client.close();
 				}
 				setScore1(score1);
 				setScore2(score2);
 			};
-	
+			
 			client.onerror = (error) => {
 				console.log('WebSocket Error:', error);
 			};
-	
+			
 			client.onclose = (event) => {
+				console.log('preparing to closeUserGame (any case) - roomId, score1, score2: ', roomId, score1, score2);
+				closeUserGame(roomId, 'finished', score1, score2)
 				console.log('WebSocket Closed:', event);
 				console.log('Close code:', event.code);
 				console.log('Close reason:', event.reason);
