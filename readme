@@ -25,22 +25,22 @@ https://circumeo.io/blog/entry/django-websockets/
 
 == db schema
 
-class Users(models.Model):
-	name = models.CharField(max_length=100)
-	email = models.EmailField(unique=True)
-	password = models.CharField(max_length=100, default='')
-	avatar = models.CharField(max_length=200, default='')
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
+	class Meta:
+		model = User
+		fields = ['id', 'username', 'email', 'password']
+		extra_kwargs = {'password': {'write_only': True}}
+	
+	class Meta:
+		model = Games
+		fields = ['id', 'user_one_id', 'user_two_id', 'user_one_score', 'user_two_score', 'created_at', 'updated_at', 'status']
+	
+	class Meta:
+		model = Image
+		fields = ('id', 'image', 'uploaded_at')
 
-class Games(models.Model):
-	user_one_id = models.IntegerField()
-	user_two_id = models.IntegerField()
-	user_one_score = models.IntegerField()
-	user_two_score = models.IntegerField()
-	created_at = models.DateTimeField(auto_now_add=True)
-	updated_at = models.DateTimeField(auto_now=True)
-	status = models.CharField(max_length=100)
+	class Meta:
+		model = Profile
+		fields = ['id', 'user_id', 'username', 'created_at', 'avatar_url', 'is_online']
 
 ============================================================================
 далее

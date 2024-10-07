@@ -10,6 +10,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 	const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 	const [squareX, setSquareX] = useState(0);
 	const [squareY, setSquareY] = useState(0);
+	const [isPlayerOne, setIsPlayerOne] = useState<boolean | null>(null)
 
     const [velocityX, setVelocityX] = useState(0);
     const [velocityY, setVelocityY] = useState(0);
@@ -203,25 +204,37 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 			}
 
 			else if (mode === 3) { // remote mode
-				// move only paddle 1 if youe are player 1
-				// move only paddle 2 if youe are player 2
-
-				setPaddle2Y((prevPaddle2Y) => {
-					let newPaddle2Y = prevPaddle2Y;
-					if (pressedKeys['ArrowUp']) {
-						newPaddle2Y = Math.max(0 + paddleHeight / 2, newPaddle2Y - 5);
-					}
-					if (pressedKeys['ArrowDown']) {
-						newPaddle2Y = Math.min(screen.h - paddleHeight / 2, newPaddle2Y + 5);
-					}
-					return newPaddle2Y;
-				});
-				
+				// move only paddle 1 if youre player 1
+				if (isPlayerOne) {
+					setPaddle1Y((prevPaddle1Y) => {
+						let newPaddle1Y = prevPaddle1Y
+						if (pressedKeys['q'] || pressedKeys['Q']) {
+							newPaddle1Y = Math.max(0 + paddleHeight / 2, newPaddle1Y - 5);
+						}
+						if (pressedKeys['a'] || pressedKeys['A']) {
+							newPaddle1Y = Math.min(screen.h - paddleHeight / 2, newPaddle1Y + 5);
+						}
+						return newPaddle1Y;
+					})
+				}
+				// move only paddle 2 if youre player 2
+				else {
+					setPaddle2Y((prevPaddle2Y) => { // move paddle with keyboard
+						let newPaddle2Y = prevPaddle2Y
+						if (pressedKeys['ArrowUp']) {
+							newPaddle2Y = Math.max(0 + paddleHeight / 2, newPaddle2Y - 5);
+						}
+						if (pressedKeys['ArrowDown']) {
+							newPaddle2Y = Math.min(screen.h - paddleHeight / 2, newPaddle2Y + 5);
+						}
+						return newPaddle2Y;
+					});
+				}
 			}
 
 			else {
 				setPaddle1Y((prevPaddle1Y) => {
-					let newPaddle1Y = prevPaddle1Y;
+					let newPaddle1Y = prevPaddle1Y
 					if (pressedKeys['q'] || pressedKeys['Q']) {
 						newPaddle1Y = Math.max(0 + paddleHeight / 2, newPaddle1Y - 5);
 					}
@@ -231,7 +244,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 					return newPaddle1Y;
 				});
 				setPaddle2Y((prevPaddle2Y) => {
-					let newPaddle2Y = prevPaddle2Y;
+					let newPaddle2Y = prevPaddle2Y
 					if (pressedKeys['ArrowUp']) {
 						newPaddle2Y = Math.max(0 + paddleHeight / 2, newPaddle2Y - 5);
 					}
@@ -264,17 +277,20 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 			if (mode === 3) {
 				const data = await findPendingGame();
 				if (!data) {
-					console.log('no pending game -> creating a new game');
-					roomId = await createUserGame('pending');
+					console.log('no pending game -> creating a new game')
+					roomId = await createUserGame('pending')
+					setIsPlayerOne(true)
 				} else {
-					console.log('pending game found: ', data);
-					console.log('adding user to game: ', data);
-					const success_added = await addUserToGame(data);
+					console.log('pending game found: ', data)
+					console.log('adding user to game: ', data)
+					const success_added = await addUserToGame(data)
 					if (!success_added) return 
 					roomId = data.id
+					setIsPlayerOne(false)
 				}
 			} else {
-				roomId = await createUserGame('single');
+				roomId = await createUserGame('single')
+				setIsPlayerOne(true)
 			}
 
 			const client = new W3CWebSocket(`wss://localhost/ws/?mode=${mode}&room=${roomId}`);
@@ -301,12 +317,17 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 					setVelocityX(move_x);
 					setVelocityY(move_y);
 				}
-				if (score1 == 5 || score2 == 5) {
+				if (score1 == 25 || score2 == 25) {
 					scoresUpdate(score1, score2);
 					client.close();
 				}
 				setScore1(score1);
 				setScore2(score2);
+				
+				if (mode === 3) {
+					setPaddle1Y(raquet_1);
+					setPaddle2Y(raquet_2);
+				}
 			};
 			
 			client.onerror = (error) => {
@@ -353,7 +374,10 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 	useEffect(() => {
 		// send coord. to server
 		if (clientRef.current && clientRef.current.readyState === clientRef.current.OPEN) {
-			clientRef.current.send(Math.round(paddle1Y)+','+Math.round(paddle2Y));
+			clientRef.current.send(Math.round(paddle1Y)+','+Math.round(paddle2Y))
+			if (mode === 3) {
+				clientRef.current.send(`move_paddle,${isPlayerOne ? paddle1Y : paddle2Y}`);
+			}
 		}
 	}, [paddle1Y, paddle2Y]);
 

@@ -97,7 +97,7 @@ export const findPendingGame = async () => {
 
 export const getAllGames = async () => {
     const token = await getToken();
-    const payload = await getTokenPayload();
+    const payload = await getTokenPayload()
     if (!token || !payload) {
         console.log('user not authenticated');
     }

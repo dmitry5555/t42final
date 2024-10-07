@@ -30,6 +30,11 @@ export const setToken = async (token: any) => {
 	cookies().set('access_token', token.access)
 	cookies().set('refresh_token', token.refresh)
 }
+export const unsetToken = async () => {
+
+	cookies().delete('access_token')
+	cookies().delete('refresh_token')
+}
 
 export const getToken = async () => {
 	const token = cookies().get('access_token')

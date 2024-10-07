@@ -51,7 +51,7 @@ def send_email(email, otp):
 		'Content-Type': 'application/json'
 	}
 	data = {
-		"from": "42_game <noreply@resend.dev>",
+		"from": "42_game <noreply@peth.shop>",
 		"to": [email],
 		"subject": "your otp code is here 🏆",
 		"html": f"<p>hello! your otp code is: {otp}. enjoy</p>"
