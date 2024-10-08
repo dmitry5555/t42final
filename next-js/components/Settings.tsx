@@ -205,9 +205,10 @@ export default function Settings() {
                     <input onChange={handleImageUpload} className='w-1/2 text-black' type="file" />
                 </div>
             <div className="flex flex-row">
-                <div className="w-1/2"></div>
                 <div className="w-1/2">
-                    {settings.avatar_url && <Image width={1000} height={1000} src={settings.avatar_url} alt="avatar" unoptimized/>}
+                </div>
+                <div className="w-1/2">
+                    {settings.avatar_url && <Image unoptimized width={1000} height={1000} src={settings.avatar_url} alt="avatar"/>}
                 </div>
             </div>
 			<div className="flex flex-row mx-auto gap-3">

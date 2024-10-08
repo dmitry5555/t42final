@@ -1,38 +1,59 @@
 'use client'
 
 import { getToken, getTokenPayload } from "@/actions/db"
+import Image from "next/image"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function Profile() {
-    // const router = useRouter()
-    // const { id } = router.query
     const params = useParams<{ id: string }>()
-    // const id = params.id
     console.log('params with id', params)
+    const id = Number(params.id)
 
     const [profiles, setProfiles] = useState([])
     const [games, setGames] = useState([])
-    const [userData, setUserData] = useState([])
+    const [user, setUser] = useState<any>({})
+    const [win, setWin] = useState<any>()
+    const [loose, setLoose] = useState<any>()
+    const [canBFriend, setCanBFriend] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchData = async () => {
             const data = await getAllProfilesData()
             const games = await getGames()
-            // const userData = data.find((user: any) => Number(user.user_id) === Number(params.id)) as Object
-            // const userData = setUserData(data.find(id == params.id))
-            // setUserData(userData)
+
             const userData = data.find((user: any) => {
                 const userId = Number(user.user_id)
                 const paramId = Number(params.id)
                 return userId === paramId
             })
-            
-            console.log('user data: ', userData)
+
+            const payload = await getTokenPayload()
+            if (payload.user_id === id )
+                setCanBFriend(true)
+            // console.log('user data: ', userData)
+            setUser(userData)
             setProfiles(data)
-            setGames(games)
-            console.log('all profiles data: ', data)
+            // filter games with only current user id (from url params)
+            const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number }) => game.user_one_id === id || game.user_two_id === id)
+            console.log('filtered games: ', filteredGames )
+            setGames(filteredGames)
+            // console.log('all profiles data: ', data)
+            // setUserData(userData)
+            const win = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
+                return (game.user_one_id === id && game.user_one_score > game.user_two_score) ||
+                    (game.user_two_id === id && game.user_two_score > game.user_one_score);
+            }).length;
+            const loose = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
+                return (game.user_one_id === id && game.user_one_score < game.user_two_score) ||
+                    (game.user_two_id === id && game.user_two_score < game.user_one_score);
+            }).length;
+            setWin(win)
+            setLoose(loose)
+            console.log('this is id from params as number:', id)
+            console.log('this is user id from profile:', user.user_id)
+            
         };
         fetchData();
     }, []);
@@ -112,34 +133,53 @@ export default function Profile() {
     };
     const extraData = getExtraData(games, profiles)
 
-    // const formChange = (e: any) => {
-    //     const { name, value } = e.target
-    //     setSettings((prevSettings) => ({
-    //         ...prevSettings,
-    //         [name]: value,
-    //     }))
-    // }
+
+    const addFriend = async (id:any) => {
+        console.log('friend added', id)
+    }
 
 	return (
-		<div className='w-96 py-4 mx-auto flex flex-col gap-3'>
-			{profiles && <h2 className="mb-4">profile</h2>}
+		<div className='w-[64rem] py-4 mx-auto flex flex-col gap-4'>
+            {user && <h2 className="mb-4">{user.username}-s profile</h2>}
+            <div className="flex flex-row">
+                <div className="w-1/2">
+                    {user.avatar_url && <Image unoptimized width={1000} height={1000} src={user.avatar_url} alt={''} className="w-32" />}
+                    {!user.avatar_url && <span className="w-32 h-32 rounded-full bg-gray"></span>}    
+                </div>
+                <div className="w-1/2 flex-col flex gap-4">
+                    <span>games: { games && games.length } </span>
+                    <span>win: { win && win } </span>
+                    <span>loose: { loose && loose } </span>
+                    {canBFriend && <button onClick={ ()=>addFriend(user.user_id) } className="uppercase border-2 py-2 px-4 mt-4 opacity-100 text-xs mr-auto">add friend</button>}
+                </div>
+            </div>
             
             <div className="flex flex-col items-center gap-4">
+            {user && <h2 className="mt-12 mb-4 mr-auto">games history</h2>}
+
             {extraData &&
                 extraData.map((game: any) => (
-                    <div key={game.user_one_id} className="flex flex-row gap-4 items-center align-left mr-auto">
-                        {game.user_one_avatar && <img src={game.user_one_avatar} alt={''} className="w-10 h-10 rounded-full" />}
-                        {!game.user_one_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
-                        <span className="">{game.user_one_username}</span>
+                    <div key={game.user_one_id} className="text-xs flex flex-row items-center w-full">
+                        <div className="w-1/2 flex flex-row items-center w-full gap-4 ">
+                            {game.user_one_avatar && <Image unoptimized width={1000} height={1000} src={game.user_one_avatar} alt={''} className="w-7 h-7 rounded-full" />}
+                            {!game.user_one_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
+                            <span className="">{game.user_one_username}</span>
+                            <span className="px-2"> vs </span>
+                            {game.user_two_avatar && <Image unoptimized width={1000} height={1000} src={game.user_two_avatar} alt={''} className="w-7 h-7 rounded-full" />}
+                            {!game.user_two_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
+                            <span className="">{game.user_two_username}</span> 
+                        </div>
                         
-                        {game.user_two_avatar && <img src={game.user_two_avatar} alt={''} className="w-10 h-10 rounded-full" />}
-                        {!game.user_two_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
-                        <span className="">{game.user_two_username}</span>
-                    
-                        <span className="">{game.user_one_score}</span>
-                        <span className="">{game.user_two_score}</span>
-                        
-                        {game.user_one_score == 5 ? 'WIN' : ''}
+                        <div className="w-1/2">
+                            <span className="px-2">  
+                                {game.user_one_score}
+                                <span>:</span>
+                                {game.user_two_score}
+                            </span>
+                            <span className=""> {new Date(game.created_at).toLocaleString()} </span>
+                            
+                            {/* {game.user_one_score == 5 ? 'WIN' : ''} */}
+                        </div>
                     </div>
                 ))
             }

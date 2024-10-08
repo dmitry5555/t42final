@@ -14,6 +14,7 @@ export default function Users() {
             const users = await getUsers();
             const games = await getGames();
             // console.log(users)
+            
             setUsers(users)
             setGames(games)
             // // console.log('data from useEffect : ', data);
@@ -28,7 +29,7 @@ export default function Users() {
             // }
         };
         fetchData();
-    }, []);
+    });
     
     const getUsers = async () => {
         const token = await getToken();
@@ -86,10 +87,9 @@ export default function Users() {
         }
     }
 
-    const addFriend = async () => {
-        alert ('friend added')
-    }
-
+    // const addFriend = async () => {
+    //     alert ('friend added')
+    // }
 
     // const formChange = (e: any) => {
     //     const { name, value } = e.target
@@ -106,13 +106,13 @@ export default function Users() {
                 // map users
                 users.map((user: { user_id: number; username: string; avatar_url: string; is_online: boolean }) => (
                     <div key={user.user_id} className="flex flex-row items-center gap-4">
-                        {user.avatar_url && <img src={user.avatar_url} alt={`Avatar of ${user.username}`} className="w-10 h-10 rounded-full" />}
+                        {user.avatar_url && <Image unoptimized width={1000} height={1000} src={user.avatar_url} alt={''} className="w-10 h-10 rounded-full" />}
                         {!user.avatar_url && <span className="w-10 h-10 rounded-full bg-gray"></span>}
                         <span>{user.username}</span>
                         {user.is_online && <span><span className="w-2 h-2 bg-green"></span> is online</span>}
                         <div className='ml-auto flex flex-row '>
-                            <Link href={`/profile/${user.user_id}`} className='hover:opacity-70 uppercase border-2 py-2 px-4 opacity-100 text-xs'>open</Link>
-                            <button onClick={()=>addFriend()} className="uppercase border-2 py-2 px-4 opacity-100 text-xs hover:opacity-70 ">+friend</button>
+                            <Link href={`/profile/${user.user_id}`} className='hover:opacity-70 uppercase border-2 py-2 px-4 opacity-100 text-xs'>profile</Link>
+                            {/* <button onClick={()=>addFriend()} className="uppercase border-2 py-2 px-4 opacity-100 text-xs hover:opacity-70 ">+friend</button> */}
                         </div>
                     </div>
                 ))
