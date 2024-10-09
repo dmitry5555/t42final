@@ -122,6 +122,8 @@ export default function Settings() {
             });
 
             if (response.ok) {
+                // const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+                // data.avatar_url = settings.avatar_url.replace('localhost', currentHost);    
                 setSettings(data)
                 const resp = await response.json();
                 console.log('ok :', resp)
@@ -167,7 +169,7 @@ export default function Settings() {
                 console.log('img name: ', sanitizedFileName)
 				// setImage('https://localhost/images/' + sanitizedFileName)
                 const data = {
-                    avatar_url: 'https://localhost/images/' + sanitizedFileName,
+                    avatar_url: sanitizedFileName,
                     username: settings.username,
                     user_id: payload.user_id,
                 }
@@ -208,7 +210,7 @@ export default function Settings() {
                 <div className="w-1/2">
                 </div>
                 <div className="w-1/2">
-                    {settings.avatar_url && <Image unoptimized width={1000} height={1000} src={settings.avatar_url} alt="avatar"/>}
+                    {settings.avatar_url && <Image unoptimized width={1000} height={1000} src={'/images/'+settings.avatar_url} alt="avatar"/>}
                 </div>
             </div>
 			<div className="flex flex-row mx-auto gap-3">

@@ -153,3 +153,4 @@ export const closeUserGame = async (roomId: number, status: string, score1: numb
         console.error('error: ', error);
     }
 } 
+

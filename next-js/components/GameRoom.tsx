@@ -38,7 +38,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
     // State for keyboard presses emulation
     const [aiKeys, setAiKeys] = useState<{ up: boolean; down: boolean }>({ up: false, down: false });
     // ======= End of AI Logic variables =======
-
+	
     // ====== AI Logic ======
     // Effect to update the refs when the ball's position changes
     useEffect(() => {
@@ -274,6 +274,10 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 
 		let roomId : number 
 		const fetchData = async () => {
+			let ip = await fetch('https://api.ipify.org?format=json')
+				.then(response => response.json())
+				.then(data => data.ip);
+
 			if (mode === 3) {
 				const data = await findPendingGame();
 				if (!data) {
@@ -293,8 +297,13 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 				setIsPlayerOne(true)
 			}
 
-			const client = new W3CWebSocket(`wss://localhost/ws/?mode=${mode}&room=${roomId}`);
-	
+			// let newIp
+			// if (ip == '161.246.157.36')
+				// newIp = 'localhost'
+			// console.log ('ip testing; ', ip)
+
+			const client = new W3CWebSocket(`wss://${ (ip == '161.246.157.36') ? 'localhost' : '10.19.245.42'}/ws/?mode=${mode}&room=${roomId}`);
+			
 			client.onopen = () => {
 				console.log('WebSocket Client Connected ✅');
 				startUpdatingSquarePosition();

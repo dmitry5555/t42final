@@ -106,7 +106,7 @@ export default function Users() {
                 // map users
                 users.map((user: { user_id: number; username: string; avatar_url: string; is_online: boolean }) => (
                     <div key={user.user_id} className="flex flex-row items-center gap-4">
-                        {user.avatar_url && <Image unoptimized width={1000} height={1000} src={user.avatar_url} alt={''} className="w-10 h-10 rounded-full" />}
+                        {user.avatar_url && <Image unoptimized width={1000} height={1000} src={'/images/' + user.avatar_url} alt={''} className="w-10 h-10 rounded-full" />}
                         {!user.avatar_url && <span className="w-10 h-10 rounded-full bg-gray"></span>}
                         <span>{user.username}</span>
                         {user.is_online && <span><span className="w-2 h-2 bg-green"></span> online now</span>}

@@ -186,7 +186,7 @@ export default function Profile() {
             {user && <h2 className="mb-4">{user.username}-s profile</h2>}
             <div className="flex flex-row">
                 <div className="w-1/2">
-                    {user.avatar_url && <Image unoptimized width={1000} height={1000} src={user.avatar_url} alt={''} className="w-32" />}
+                    {user.avatar_url && <Image unoptimized width={1000} height={1000} src={'/images/'+user.avatar_url} alt={''} className="w-32" />}
                     {!user.avatar_url && <span className="w-32 h-32 rounded-full bg-gray"></span>}    
                 </div>
                 <div className="w-1/2 flex-col flex gap-4">
