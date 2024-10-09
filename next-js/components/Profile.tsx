@@ -60,7 +60,7 @@ export default function Profile() {
             setLoose(loose)
             console.log('this is id from params as number:', id)
             console.log('this is user id from profile:', user.user_id)
-            if (friends.includes(id)) {
+            if (friends && friends.includes(id)) {
                 setAlreadyFriend(true)
                 return
             }
@@ -145,7 +145,7 @@ export default function Profile() {
 
 
     const addFriend = async (id:any) => {
-            if (friends.includes(id)) {
+            if (friends && friends.includes(id)) {
                 setAlreadyFriend(true)
                 return
             }

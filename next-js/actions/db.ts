@@ -65,7 +65,7 @@ export const signUp = async (username: string, password: string) => {
 	};
 
 	try {
-		const response = await fetch('https://localhost/api/users/', {
+		const response = await fetch('https://0.0.0.0/api/users/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

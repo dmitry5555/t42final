@@ -62,7 +62,7 @@ export default function GameMenu() {
     return (
 
          <div className='gap-4 flex flex-col w-96 mx-auto py-4'>
-            <My3DTextComponent containerId={containerId} text="1-1 game" url="" /> 
+            {/* <My3DTextComponent containerId={containerId} text="1-1 game" url="" />  */}
 			 <div className='gap-2 flex flex-col z-10'>
 				<Link href='/game-keyboard' className='hover:opacity-70'>1-1 game</Link>
 				<Link href='/game-ai' className='hover:opacity-70'>1-1 game w/ai</Link>

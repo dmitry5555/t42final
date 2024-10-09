@@ -26,11 +26,26 @@ SECRET_KEY = 'django-insecure-ntr+2a5xpe3#(#qnxt=uw04f5eu55jlro!ax=$)z3nd45xzv&o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # 'http://10.19.233.196',
+    # 'https://10.19.233.196'
+	# "http://0.0.0.0",
+	# "https://0.0.0.0",
+	# "http://localhost",
+	# "https://localhost",
+    # "localhost",
+    # "0.0.0.0",
+    '*'
+]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost',
-    'https://127.0.0.1',
+    # 'https://localhost',
+    # 'https://127.0.0.1',
+    # 'https://10.19.233.196'
+    "http://*",
+	"https://*",
+	# "http://localhost",
+	# "https://localhost",
 ] 
 
 # Application definition
@@ -77,9 +92,15 @@ MIDDLEWARE = [
 	'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOWED_ORIGINS = [
+    "http://0.0.0.0",
+	"https://0.0.0.0",
+	"http://localhost",
 	"https://localhost",
-    "https://127.0.0.1",
+    # "https://127.0.0.1",
+    # "https://10.19.233.196"
 
 ]
 

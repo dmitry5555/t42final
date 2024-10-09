@@ -12,6 +12,7 @@ class TestConsumer(AsyncWebsocketConsumer):
 	game_running = {}  # словарь для хранения состояния игры (запущена или нет) по комнатам
 
 	async def connect(self):
+		logger.debug('WebSocket connection established')
 		await self.accept()
 
 		query_string = self.scope['query_string'].decode()
