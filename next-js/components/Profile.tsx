@@ -17,6 +17,8 @@ export default function Profile() {
     const [win, setWin] = useState<any>()
     const [loose, setLoose] = useState<any>()
     const [canBFriend, setCanBFriend] = useState<boolean>(false)
+    const [friends, setFriends] = useState<any>()
+    const [alreadyFriend, setAlreadyFriend] =  useState<boolean>(false)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,29 +33,37 @@ export default function Profile() {
 
             const payload = await getTokenPayload()
             if (payload.user_id === id )
-                setCanBFriend(true)
+                setCanBFriend(false)
             // console.log('user data: ', userData)
             setUser(userData)
+            setFriends(userData.friends)
             setProfiles(data)
             // filter games with only current user id (from url params)
-            const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number }) => game.user_one_id === id || game.user_two_id === id)
-            console.log('filtered games: ', filteredGames )
+            // const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number }) => game.user_one_id === id || game.user_two_id === id)
+            const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => 
+                (game.user_one_id === id || game.user_two_id === id) && 
+                (game.user_one_score === 5 || game.user_two_score === 5)
+            )
+            console.log('filtered games: ', filteredGames)
             setGames(filteredGames)
             // console.log('all profiles data: ', data)
             // setUserData(userData)
             const win = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
-                return (game.user_one_id === id && game.user_one_score > game.user_two_score) ||
-                    (game.user_two_id === id && game.user_two_score > game.user_one_score);
+                return (game.user_one_id === id && game.user_one_score === 5) ||
+                    (game.user_two_id === id && game.user_two_score === 5)
             }).length;
             const loose = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
-                return (game.user_one_id === id && game.user_one_score < game.user_two_score) ||
-                    (game.user_two_id === id && game.user_two_score < game.user_one_score);
+                return (game.user_one_id === id && game.user_two_score === 5) ||
+                    (game.user_two_id === id && game.user_one_score === 5)
             }).length;
             setWin(win)
             setLoose(loose)
             console.log('this is id from params as number:', id)
             console.log('this is user id from profile:', user.user_id)
-            
+            if (friends.includes(id)) {
+                setAlreadyFriend(true)
+                return
+            }
         };
         fetchData();
     }, []);
@@ -135,11 +145,44 @@ export default function Profile() {
 
 
     const addFriend = async (id:any) => {
-        console.log('friend added', id)
+            if (friends.includes(id)) {
+                setAlreadyFriend(true)
+                return
+            }
+            const data = {
+                'friends': [...user.friends, id]
+            }
+            const token = await getToken()
+            const payload = await getTokenPayload()
+            
+            console.log('users friends from state: ', user)
+            const response = await fetch(`/api/profiles/${payload.user_id}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            
+            if (response.ok) {
+                setUser((prevUser: any) => ({
+                    ...prevUser,
+                    friends: [...prevUser.friends, id]
+                }))
+                const resp = await response.json();
+            console.log('ok :', resp)
+        } else {
+            const errorText = await response.text();
+            console.error('error :', response.status, errorText);
+        }
+        console.log('friend was added tu user with id: ', id)
     }
 
 	return (
 		<div className='w-[64rem] py-4 mx-auto flex flex-col gap-4'>
+            {/* profile head */}
             {user && <h2 className="mb-4">{user.username}-s profile</h2>}
             <div className="flex flex-row">
                 <div className="w-1/2">
@@ -151,9 +194,12 @@ export default function Profile() {
                     <span>win: { win && win } </span>
                     <span>loose: { loose && loose } </span>
                     {canBFriend && <button onClick={ ()=>addFriend(user.user_id) } className="uppercase border-2 py-2 px-4 mt-4 opacity-100 text-xs mr-auto">add friend</button>}
+                    {alreadyFriend && <span>you are friends!</span>}
+                    {user.is_online && <span>online now</span>}
+                    
                 </div>
             </div>
-            
+            {/* games history */}
             <div className="flex flex-col items-center gap-4">
             {user && <h2 className="mt-12 mb-4 mr-auto">games history</h2>}
 

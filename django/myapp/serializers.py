@@ -37,4 +37,4 @@ class OTPVerifySerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Profile
-		fields = ['id', 'user_id', 'username', 'created_at', 'avatar_url', 'is_online']
+		fields = ['id', 'user_id', 'username', 'created_at', 'avatar_url', 'is_online', 'friends']

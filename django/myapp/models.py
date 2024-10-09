@@ -16,7 +16,8 @@ class Profile(models.Model):
 	# user = models.OneToOneField(User, on_delete=models.CASCADE)  # Связь с моделью User
 	avatar_url = models.URLField(max_length=200, blank=True, null=True)
 	created_at = models.DateTimeField(auto_now_add=True)
-
+	friends = models.JSONField(default=list, blank=True)
+	
 class Games(models.Model):
 	user_one_id = models.IntegerField()
 	user_two_id = models.IntegerField()

@@ -109,7 +109,7 @@ export default function Users() {
                         {user.avatar_url && <Image unoptimized width={1000} height={1000} src={user.avatar_url} alt={''} className="w-10 h-10 rounded-full" />}
                         {!user.avatar_url && <span className="w-10 h-10 rounded-full bg-gray"></span>}
                         <span>{user.username}</span>
-                        {user.is_online && <span><span className="w-2 h-2 bg-green"></span> is online</span>}
+                        {user.is_online && <span><span className="w-2 h-2 bg-green"></span> online now</span>}
                         <div className='ml-auto flex flex-row '>
                             <Link href={`/profile/${user.user_id}`} className='hover:opacity-70 uppercase border-2 py-2 px-4 opacity-100 text-xs'>profile</Link>
                             {/* <button onClick={()=>addFriend()} className="uppercase border-2 py-2 px-4 opacity-100 text-xs hover:opacity-70 ">+friend</button> */}

@@ -42,7 +42,7 @@ export default function GameMenu() {
 				<Link href='/game-remote' className='hover:opacity-70'>1-1 remote game</Link>
 				<Link href='/users' className='hover:opacity-70'>users</Link>
 				<Link href='/settings' className='hover:opacity-70'>settings</Link>
-                <div onClick={unsetTok} className='hover:opacity-70 hover:opacity-70'>exit</div>
+                <div onClick={unsetTok} className='hover:opacity-70 hover:cursor-pointer hover:opacity-70'>exit</div>
 				{/* <Link href='' className='hover:opacity-70'>exit</Link> */}
                 {/* <button onClick={getAllGames}>get all games</button> */}
                 {/* <button onClick={pg2}>get pending games</button> */}

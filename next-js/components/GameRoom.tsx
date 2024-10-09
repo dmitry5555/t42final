@@ -317,7 +317,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 					setVelocityX(move_x);
 					setVelocityY(move_y);
 				}
-				if (score1 == 25 || score2 == 25) {
+				if (score1 == 5 || score2 == 5) {
 					scoresUpdate(score1, score2);
 					client.close();
 				}
