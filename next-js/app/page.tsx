@@ -9,6 +9,8 @@ import GameMenu from '@/components/GameMenu';
 export default async function Home() {
 
     return (
-        <GameMenu />
+        <>
+            <GameMenu />
+        </>
     )
 }

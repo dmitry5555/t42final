@@ -24,6 +24,7 @@ export default function Profile() {
         const fetchData = async () => {
             const data = await getAllProfilesData()
             const games = await getGames()
+            console.log('all games: ', games)
 
             const userData = data.find((user: any) => {
                 const userId = Number(user.user_id)
@@ -41,25 +42,27 @@ export default function Profile() {
             // filter games with only current user id (from url params)
             // const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number }) => game.user_one_id === id || game.user_two_id === id)
             const filteredGames = games.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => 
-                (game.user_one_id === id || game.user_two_id === id) && 
-                (game.user_one_score === 5 || game.user_two_score === 5)
+                ((game.user_one_id == id && game.user_two_id ) || 
+                (game.user_two_id == id && game.user_one_id )) &&
+                (game.user_one_score == 5 || game.user_two_score == 5)
             )
             console.log('filtered games: ', filteredGames)
             setGames(filteredGames)
             // console.log('all profiles data: ', data)
             // setUserData(userData)
             const win = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
-                return (game.user_one_id === id && game.user_one_score === 5) ||
-                    (game.user_two_id === id && game.user_two_score === 5)
+                return (game.user_one_id == id && game.user_one_score == 5) ||
+                    (game.user_two_id == id && game.user_two_score == 5)
             }).length;
             const loose = filteredGames.filter((game: { user_one_id: number; user_two_id: number; user_one_score: number; user_two_score: number }) => {
-                return (game.user_one_id === id && game.user_two_score === 5) ||
-                    (game.user_two_id === id && game.user_one_score === 5)
+                return (game.user_one_id == id && game.user_two_score == 5) ||
+                    (game.user_two_id == id && game.user_one_score == 5)
             }).length;
             setWin(win)
             setLoose(loose)
+            
             console.log('this is id from params as number:', id)
-            console.log('this is user id from profile:', user.user_id)
+            // console.log('this is user id from profile:', user.user_id)
             if (friends && friends.includes(id)) {
                 setAlreadyFriend(true)
                 return
@@ -187,7 +190,7 @@ export default function Profile() {
             <div className="flex flex-row">
                 <div className="w-1/2">
                     {user.avatar_url && <Image unoptimized width={1000} height={1000} src={'/images/'+user.avatar_url} alt={''} className="w-32" />}
-                    {!user.avatar_url && <span className="w-32 h-32 rounded-full bg-gray"></span>}    
+                    {!user.avatar_url && <span className="w-32 h-32 rounded-full bg-pink-500"></span>}    
                 </div>
                 <div className="w-1/2 flex-col flex gap-4">
                     <span>games: { games && games.length } </span>
@@ -207,12 +210,12 @@ export default function Profile() {
                 extraData.map((game: any) => (
                     <div key={game.user_one_id} className="text-xs flex flex-row items-center w-full">
                         <div className="w-1/2 flex flex-row items-center w-full gap-4 ">
-                            {game.user_one_avatar && <Image unoptimized width={1000} height={1000} src={game.user_one_avatar} alt={''} className="w-7 h-7 rounded-full" />}
-                            {!game.user_one_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
+                            {game.user_one_avatar && <Image unoptimized width={1000} height={1000} src={'/images/'+game.user_one_avatar} alt={''} className="w-7 h-7 rounded-full" />}
+                            {!game.user_one_avatar && <span className="w-10 h-10 rounded-full bg-pink-500"></span>}                        
                             <span className="">{game.user_one_username}</span>
                             <span className="px-2"> vs </span>
-                            {game.user_two_avatar && <Image unoptimized width={1000} height={1000} src={game.user_two_avatar} alt={''} className="w-7 h-7 rounded-full" />}
-                            {!game.user_two_avatar && <span className="w-10 h-10 rounded-full bg-gray"></span>}                        
+                            {game.user_two_avatar && <Image unoptimized width={1000} height={1000} src={'/images/'+game.user_two_avatar} alt={''} className="w-7 h-7 rounded-full" />}
+                            {!game.user_two_avatar && <span className="w-10 h-10 rounded-full bg-pink-500"></span>}                        
                             <span className="">{game.user_two_username}</span> 
                         </div>
                         
@@ -230,7 +233,7 @@ export default function Profile() {
                 ))
             }
             </div>
-            <Link href='/' className="border-2 py-2 px-4 mt-4 opacity-100 text-sm mx-auto">Back</Link>
+            <Link href='/users' className="border-2 py-2 px-4 mt-4 opacity-100 text-sm mx-auto">Back</Link>
 
 		</div>
 	)

@@ -107,35 +107,6 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
         }
     }, [predictedY, paddle1Y]);
 
-    // Display the AI info
-    // const aiInfo = () => {
-    //     let aiInfoDiv = document.getElementById('ai-info');
-    //     if (!aiInfoDiv) {
-    //         aiInfoDiv = document.createElement('div');
-    //         aiInfoDiv.id = 'ai-info';
-    //         aiInfoDiv.style.position = 'absolute';
-    //         aiInfoDiv.style.top = '10px';
-    //         aiInfoDiv.style.left = '50px';
-    //         aiInfoDiv.style.color = 'white';
-    //         aiInfoDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-    //         aiInfoDiv.style.padding = '5px';
-    //         document.body.appendChild(aiInfoDiv);
-    //     }
-    //     aiInfoDiv.innerHTML = `
-    //         AI X: ${aiX}<br>
-    //         AI Y: ${aiY}<br>
-    //         Velocity X: ${aiVelocityX}<br>
-    //         Velocity Y: ${aiVelocityY}<br>
-    //         Predicted Y: ${predictedY}
-    //     `;
-    // };
-    
-    // // Effect to update display of the AI info
-    // useEffect(() => {
-    //     aiInfo(); // Call this function independently to update the display
-    // }, [aiX, aiY, aiVelocityX, aiVelocityY, predictedY]); // Ensure it runs when any of these variables change
-
-    // ====== End of AI Logic ======
 
 	const drawSquare = useCallback((x: number, y: number) => {
 		const canvas = canvasRef.current;
@@ -274,9 +245,9 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 
 		let roomId : number 
 		const fetchData = async () => {
-			let ip = await fetch('https://api.ipify.org?format=json')
-				.then(response => response.json())
-				.then(data => data.ip);
+			// let ip = await fetch('https://api.ipify.org?format=json')
+			// 	.then(response => response.json())
+			// 	.then(data => data.ip);
 
 			if (mode === 3) {
 				const data = await findPendingGame();
@@ -296,13 +267,10 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 				roomId = await createUserGame('single')
 				setIsPlayerOne(true)
 			}
-
-			// let newIp
-			// if (ip == '161.246.157.36')
-				// newIp = 'localhost'
-			// console.log ('ip testing; ', ip)
-
-			const client = new W3CWebSocket(`wss://${ (ip == '161.246.157.36') ? 'localhost' : '10.19.245.42'}/ws/?mode=${mode}&room=${roomId}`);
+			// if current ip equal to browser url
+			let ip = window.location.hostname
+			const client = new W3CWebSocket(`wss://${ (ip == '10.19.231.216') ? '10.19.231.216' : 'localhost' }/ws/?mode=${mode}&room=${roomId}`);
+			// const client = new W3CWebSocket(`wss://localhost/ws/?mode=${mode}&room=${roomId}`);
 			
 			client.onopen = () => {
 				console.log('WebSocket Client Connected ✅');
@@ -319,19 +287,21 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 			};
 	
 			client.onmessage = (message) => {
-				const [x, y, move_x, move_y, raquet_1, raquet_2, score1, score2] = (message.data as string).split(',').map(Number);
+				const [x, y, move_x, move_y, raquet_1, raquet_2, bscore1, bscore2] = (message.data as string).split(',').map(Number);
 				setSquareX(x);
 				setSquareY(y);
 				if (mode === 1) {
 					setVelocityX(move_x);
 					setVelocityY(move_y);
 				}
-				if (score1 == 5 || score2 == 5) {
-					scoresUpdate(score1, score2);
+				if (bscore1 == 5 || bscore2 == 5) {
+					closeUserGame(roomId, 'finished', bscore1, score2)
+					// проброс счета в родитель для отображения результатов
+					scoresUpdate(bscore1, bscore2);
 					client.close();
 				}
-				setScore1(score1);
-				setScore2(score2);
+				setScore1(bscore1);
+				setScore2(bscore2);
 				
 				if (mode === 3) {
 					setPaddle1Y(raquet_1);
@@ -345,7 +315,6 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 			
 			client.onclose = (event) => {
 				console.log('preparing to closeUserGame (any case) - roomId, score1, score2: ', roomId, score1, score2);
-				closeUserGame(roomId, 'finished', score1, score2)
 				console.log('WebSocket Closed:', event);
 				console.log('Close code:', event.code);
 				console.log('Close reason:', event.reason);

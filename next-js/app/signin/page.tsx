@@ -44,7 +44,6 @@ export default function Home() {
 				});
 
 				if (!response2.ok) {
-					const errorText = await response2.text();
 					setError("error getting otp");
 				} else {
 					setError('')
@@ -52,7 +51,7 @@ export default function Home() {
 				}
 
 			} else {
-				const errorText = await response.text();
+				const resp = await response.text();
 				setError("wrong credentials");
 			}
 		} catch (error) {
@@ -99,7 +98,7 @@ export default function Home() {
 					setError('')
 					setToken(tokenData)
 					// console.log('JWT is set');
-					router.push('/')
+					router.push('/settings')
 				}
 
 			} else {
@@ -110,10 +109,6 @@ export default function Home() {
 			console.error('wrong credentials (checking otp):', error);
 		}
 	}
-
-	const handleSignOut = () => {
-		// setTokenOk(false);
-	};
 
     return (
         <div className='gap-4 flex flex-col w-96 mx-auto py-4'>

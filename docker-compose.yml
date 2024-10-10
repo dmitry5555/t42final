@@ -1,6 +1,5 @@
 services:
 
-
   postgres:
     container_name: t42-postgres
     build: ./postgres
@@ -52,7 +51,7 @@ services:
     container_name: t42-nginx
     build: ./nginx
     ports:
-      - 80:80
+      # - 80:80
       - 443:443
     depends_on:
       - nextjs
@@ -60,6 +59,56 @@ services:
     volumes:
       - avatars:/app/media/
 
+  prometheus:
+    image: prom/prometheus:latest
+    command:
+      - '--storage.tsdb.retention.time=30d'  # Adjust the retention period as needed
+      - '--storage.tsdb.path=/prometheus'    # Path for data storage
+      - '--config.file=/etc/prometheus/prometheus.yml'  # Path for the config file
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+      - ./prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml
+    # ports:
+    #   - "9090:9090"
+    restart: unless-stopped
+
+  grafana:
+    container_name: t42-grafana
+    image: grafana/grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SERVER_HTTP_PORT: 3001
+      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"  # Добавлено
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true" 
+    volumes:
+      - grafana:/etc/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    # ports:
+    #   - "3001:3001"
+    restart: unless-stopped
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    # ports:
+    #   - "9100:9100"
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
+  postgres_exporter:
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@t42-postgres:5432/${POSTGRES_DB}?sslmode=disable"
+    # ports:
+    #   - "9187:9187"
+    restart: unless-stopped
+
 volumes:
+  grafana:
   dbdata:
   avatars:
+  prometheus_data:

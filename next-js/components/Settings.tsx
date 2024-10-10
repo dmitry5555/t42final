@@ -115,6 +115,7 @@ export default function Settings() {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
+                    
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
@@ -191,7 +192,7 @@ export default function Settings() {
     }
 
 	return (
-		<div className='w-96 py-4 mx-auto flex flex-col gap-3'>
+		<div className='w-96 py-4 mx-auto flex flex-col gap-3 '>
 			<h2>settings</h2>
 			{/* <div className="flex flex-row items-center">
 				<label className="w-1/2">User ID: </label>
