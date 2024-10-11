@@ -24,6 +24,8 @@ export default function Profile() {
         const fetchData = async () => {
             const data = await getAllProfilesData()
             const games = await getGames()
+            const payload = await getTokenPayload()
+       
             console.log('all games: ', games)
 
             const userData = data.find((user: any) => {
@@ -32,7 +34,12 @@ export default function Profile() {
                 return userId === paramId
             })
 
-            const payload = await getTokenPayload()
+            const loggedUserData = data.find((user: any) => {
+                const userId = Number(user.user_id)
+                const paramId = Number(payload.user_id)
+                return userId === paramId
+            })
+
             if (payload.user_id == id )
                 setCanBFriend(false)
             // console.log('user data: ', userData)
@@ -61,13 +68,19 @@ export default function Profile() {
             }).length;
             setWin(win)
             setLoose(loose)
-            
-            console.log('this is id from params as number:', id)
-            // console.log('this is user id from profile:', user.user_id)
-            if (friends && friends.includes(id)) {
+            // console.log('userData.friends: ', userData.friends)
+            // console.log('userData.friends.includes(id): ', id )
+            if (loggedUserData.friends && loggedUserData.friends.includes(id)) {
                 setAlreadyFriend(true)
                 return
             }
+            
+            console.log('this is id from params as number:', id)
+            // console.log('this is user id from profile:', user.user_id)
+            // if (friends && friends.includes(id)) {
+            //     setAlreadyFriend(true)
+            //     return
+            // }
         };
         fetchData();
     }, []);
@@ -147,13 +160,7 @@ export default function Profile() {
     };
     const extraData = getExtraData(games, profiles)
 
-
     const addFriend = async (id:any) => {
-            if (friends && friends.includes(id)) {
-                setAlreadyFriend(true)
-                setCanBFriend(false)
-                return
-            }
             const data = {
                 'friends': [...user.friends, id]
             }
@@ -177,6 +184,8 @@ export default function Profile() {
                     friends: [...prevUser.friends, id]
                 }))
                 const resp = await response.json();
+                setCanBFriend(false)
+                setAlreadyFriend(true)
             console.log('ok :', resp)
         } else {
             const errorText = await response.text();
@@ -198,7 +207,7 @@ export default function Profile() {
                     <span>games: { games && games.length } </span>
                     <span>win: { win && win } </span>
                     <span>loose: { loose && loose } </span>
-                    {canBFriend && <button onClick={ ()=>addFriend(user.user_id) } className="uppercase border-2 py-2 px-4 mt-4 opacity-100 text-xs mr-auto">add friend</button>}
+                    {canBFriend && !alreadyFriend && <button onClick={ ()=>addFriend(id) } className="uppercase border-2 py-2 px-4 mt-4 opacity-100 text-xs mr-auto">add friend</button>}
                     {alreadyFriend && <span>you are friends!</span>}
                     {user.is_online && <span>online now</span>}
                     

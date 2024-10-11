@@ -50,7 +50,7 @@ export default function GameMenu() {
         const token = await getToken()
         const payload = await getTokenPayload()
         if (!token || !payload)
-            router.push('/signin')
+            router.push('/signup')
 	}
 
 	useEffect(() => {

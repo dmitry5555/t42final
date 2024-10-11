@@ -46,7 +46,7 @@ export default function Users() {
 
 
 	return (
-		<div className='w-132 py-4 mx-auto flex flex-col gap-4'>
+		<div className='w-[64rem] py-4 mx-auto flex flex-col gap-4'>
 			<h2 className="mb-4">all users</h2>
             {users &&
                 users.map((user: { user_id: number; username: string; avatar_url: string; is_online: boolean }) => (

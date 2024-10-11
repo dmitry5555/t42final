@@ -4,7 +4,7 @@
 // 2 - tournament		
 // 3 - 1/1 remote game
 
-import GameMenu from '@/components/GameMenu';
+import GameMenu from "@/components/GameMenu";
 
 export default async function Home() {
 
