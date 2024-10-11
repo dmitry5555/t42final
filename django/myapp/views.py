@@ -4,7 +4,7 @@ from .models import Games, Profile
 from .serializers import UserSerializer, GameSerializer, ProfileSerializer
 from django.contrib.auth.models import User
 
-
+import os
 import random
 import string
 from rest_framework.views import APIView
@@ -42,7 +42,7 @@ class GameViewSet(viewsets.ModelViewSet):
 def generate_otp():
 	return ''.join(random.choices(string.digits, k=6))
 
-resend_k = 're_VXnif9Dp_5UKJQDvKKbL7UE5HG56uLSx2'
+resend_k = os.environ.get('RESEND')
 
 def send_email(email, otp):
 	url = 'https://api.resend.com/emails'

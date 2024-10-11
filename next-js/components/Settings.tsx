@@ -8,27 +8,20 @@ import { useEffect, useState } from "react"
 
 export default function Settings() {
 
-	// const [image, setImage] = useState('')
     const router = useRouter()
 
     const [settings, setSettings] = useState({
         avatar_url: '',
         username: '',
         user_id: 0,
-        // created_at: 0,
-        // is_online: false,
+        is_online: true,
     });
 
     useEffect(() => {
         const fetchData = async () => {
             const data = await getProfileData();
-            // console.log('data from useEffect : ', data);
             if (!data) {
                 setProfileData()
-                // const newData = await getProfileData()
-                // setSettings(newData)
-                // console.log('newData from getProfileData : ', newData)
-                // console.log('settings from useEffect : ', settings)
             } else {
                 setSettings(data)
             }
@@ -75,6 +68,7 @@ export default function Settings() {
                 avatar_url: '',
                 username: 'user' + payload.user_id,
                 user_id: payload.user_id,
+                is_online: true,
             }
             setSettings(data)
             const response = await fetch(`/api/profiles/`, {
@@ -108,8 +102,7 @@ export default function Settings() {
                 avatar_url: settings.avatar_url,
                 username: settings.username,
                 user_id: payload.user_id,
-                // created_at: settings.created_at,
-                // is_online: settings.is_online,
+                is_online: true,
             }
             const response = await fetch(`/api/profiles/${payload.user_id}/`, {
                 method: 'PATCH',
@@ -168,11 +161,11 @@ export default function Settings() {
             
             if (response.ok) {
                 console.log('img name: ', sanitizedFileName)
-				// setImage('https://localhost/images/' + sanitizedFileName)
                 const data = {
                     avatar_url: sanitizedFileName,
                     username: settings.username,
                     user_id: payload.user_id,
+                    is_online: true
                 }
                 setSettings(data)
             } else {
@@ -194,10 +187,7 @@ export default function Settings() {
 	return (
 		<div className='w-96 py-4 mx-auto flex flex-col gap-3 '>
 			<h2>settings</h2>
-			{/* <div className="flex flex-row items-center">
-				<label className="w-1/2">User ID: </label>
-				<input onChange={formChange} name='user_id' value={settings.user_id} className='w-1/2 px-2 py-1 text-black' type="number" placeholder={'at@gmail.com'} />
-                </div> */}
+
             
 			<div className="flex flex-row items-center">
 				<label className="w-1/2">Username: </label>

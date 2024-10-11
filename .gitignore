@@ -162,4 +162,7 @@ cython_debug/
 #.idea/
 
 tr42.pdf
+readme
+tr42 new.pdf
 .DS_Store
+list.pdf

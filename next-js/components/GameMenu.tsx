@@ -4,9 +4,47 @@ import { getToken, getTokenPayload, unsetToken } from "@/actions/db";
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef } from "react";
+import { init } from "./text3D";
+
+const My3DTextComponent: React.FC<{
+    onClick?: () => void;
+    containerId: React.RefObject<HTMLCanvasElement>;
+    // text: string;
+    // url: string;
+}> = ({ onClick, containerId }) => {
+
+    const removeCanvas = () => {
+        const canvasElement = containerId.current;
+        if (canvasElement) {
+            canvasElement.remove(); // ลบ canvas ออกจาก DOM
+        }
+    };
+
+    useEffect(() => {
+        if (containerId.current) {
+            init(containerId.current); // เรียกฟังก์ชันการเริ่มต้น
+        }
+    }, [containerId]);
+    
+    return (
+        <div className='relative gap-4 flex flex-col w-96 mx-auto py-4'>
+            <canvas ref={containerId} className='absolute inset-0 w-94 h-full z-0'/>
+            <div className='relative z-10 gap-2 flex flex-col text-white'>
+				<Link href='/game-keyboard' className='hover:opacity-70' onClick={removeCanvas}>1-1 game</Link>
+				<Link href='/game-ai' className='hover:opacity-70' onClick={removeCanvas}>1-1 game w/ai</Link>
+				<Link href='/tournament' className='hover:opacity-70' onClick={removeCanvas}>tournament</Link>
+				<Link href='/game-remote' className='hover:opacity-70' onClick={removeCanvas}>1-1 remote game</Link>
+				<Link href='/users' className='hover:opacity-70' onClick={removeCanvas}>users</Link>
+				<Link href='/settings' className='hover:opacity-70' onClick={removeCanvas}>settings</Link>
+                <div onClick={() => {if (removeCanvas) removeCanvas(); if (onClick) onClick();}} className='hover:opacity-70 hover:cursor-pointer hover:opacity-70'>exit</div>
+        	</div>
+        </div>
+    )
+};
 
 export default function GameMenu() {
 
+    const containerId = useRef<HTMLCanvasElement | null>(null);
     const router = useRouter()
 	const checkToken = async () => {
         const token = await getToken()
@@ -48,7 +86,6 @@ export default function GameMenu() {
             } else {
                 const errorText = await response.text();
                 console.error('data not set :', response.status, errorText);
-                // router.push('/signin')
             }
         } catch (error) {
             console.error('error: ', error);
@@ -56,24 +93,12 @@ export default function GameMenu() {
     }
 
     const unsetTok = async () => {
-        // remove is_active - patch user-profile
         await setUserOffline()
         await unsetToken()
         router.push('/signin')
     }
 
     return (
-
-         <div className='gap-4 flex flex-col w-96 mx-auto py-4'>
-			 <div className='gap-2 flex flex-col z-10'>
-				<Link href='/game-keyboard' className='hover:opacity-70'>1-1 game</Link>
-				<Link href='/game-ai' className='hover:opacity-70'>1-1 game w/ai</Link>
-				<Link href='/tournament' className='hover:opacity-70'>tournament</Link>
-				<Link href='/game-remote' className='hover:opacity-70'>1-1 remote game</Link>
-				<Link href='/users' className='hover:opacity-70'>users</Link>
-				<Link href='/settings' className='hover:opacity-70'>settings</Link>
-                <div onClick={unsetTok} className='hover:opacity-70 hover:cursor-pointer hover:opacity-70'>exit</div>
-        	 </div>
-		</div>
+        <My3DTextComponent containerId={containerId} onClick={unsetTok}/>
     )
 }

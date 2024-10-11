@@ -245,9 +245,6 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 
 		let roomId : number 
 		const fetchData = async () => {
-			// let ip = await fetch('https://api.ipify.org?format=json')
-			// 	.then(response => response.json())
-			// 	.then(data => data.ip);
 
 			if (mode === 3) {
 				const data = await findPendingGame();
@@ -267,8 +264,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 				roomId = await createUserGame('single')
 				setIsPlayerOne(true)
 			}
-			// if current ip equal to browser url
-			let ip = window.location.hostname
+			const ip = window.location.hostname
 			const client = new W3CWebSocket(`wss://${ (ip == '10.19.231.216') ? '10.19.231.216' : 'localhost' }/ws/?mode=${mode}&room=${roomId}`);
 			// const client = new W3CWebSocket(`wss://localhost/ws/?mode=${mode}&room=${roomId}`);
 			

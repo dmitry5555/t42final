@@ -16,7 +16,7 @@ export default function Profile() {
     const [user, setUser] = useState<any>({})
     const [win, setWin] = useState<any>()
     const [loose, setLoose] = useState<any>()
-    const [canBFriend, setCanBFriend] = useState<boolean>(false)
+    const [canBFriend, setCanBFriend] = useState<boolean>(true)
     const [friends, setFriends] = useState<any>()
     const [alreadyFriend, setAlreadyFriend] =  useState<boolean>(false)
 
@@ -33,9 +33,10 @@ export default function Profile() {
             })
 
             const payload = await getTokenPayload()
-            if (payload.user_id === id )
+            if (payload.user_id == id )
                 setCanBFriend(false)
             // console.log('user data: ', userData)
+            console.log('user data: ', userData)
             setUser(userData)
             setFriends(userData.friends)
             setProfiles(data)
@@ -150,6 +151,7 @@ export default function Profile() {
     const addFriend = async (id:any) => {
             if (friends && friends.includes(id)) {
                 setAlreadyFriend(true)
+                setCanBFriend(false)
                 return
             }
             const data = {

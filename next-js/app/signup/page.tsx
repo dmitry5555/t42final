@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
-import { getToken, getTokenPayload } from '@/actions/db';
 
 export default function Home() {
     const router = useRouter();
@@ -49,9 +48,7 @@ export default function Home() {
         if (response.ok) {
             const res = await response.json()
             router.push('/signin')
-            // good signup - go to otp (sign-in)
         } else {
-            // setError('Check your email: ' + response.statusText);
             setError('This email is already registered. Try another one.');
         }
     }

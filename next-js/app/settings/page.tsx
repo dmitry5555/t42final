@@ -1,4 +1,3 @@
-import Background from "@/components/Background";
 import Settings from "@/components/Settings";
 
 

@@ -1,5 +1,5 @@
 'use client'
-// турнир на выбывание - single elimination, 4 игрока
+// 4 players elimination tournament
 
 import GameRoom from "@/components/GameRoom"
 import Link from "next/link"
@@ -7,8 +7,7 @@ import { useEffect, useState } from "react"
 
 
 export default function Home() {
-	// где находимся
-	// храним инфу игроков (однопользовательский режим = 1 игрок, сетовой = 2 игрока)
+	// save game data
 	const [step, setStep] = useState<string>('intro')
 	const [tScores, setTScores] = useState<number[]>([])
 	const [tPlayers, setTPlayers] = useState<string[]>([])
@@ -17,15 +16,15 @@ export default function Home() {
 	const [player2, setPlayer2] = useState<number>(1)
 	const [winner, setWinner] = useState<number>(0)
 	
-	// прокидываем счет из игры вверх - после завершения каждой
+	// send score to upper state
 	const scoresUpdate = (score1: number, score2: number) => {
-		// после первой игры
+		// after 1st game
 		if (tScores.length === 0) {
 			setPlayer1(2)
 			setPlayer2(3)
 			setStep('announce')
 		}
-		// после второй игры
+		// after 2nd game
 		if (tScores.length === 2) {
 			// победитель первой игры
 			tScores[0] > tScores[1] ? setPlayer1(0) : setPlayer1(1)
@@ -33,7 +32,7 @@ export default function Home() {
 			score1 > score2 ? setPlayer2(2) : setPlayer2(3)
 			setStep('announce')
 		}
-		// после третьей игры
+		// after 3rd game
 		if (tScores.length === 4) {
 			score1 > score2 ? setWinner(player1) : setWinner(player2)
 			setStep('final_results')
