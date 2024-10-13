@@ -21,9 +21,10 @@ export default function Settings() {
         const fetchData = async () => {
             const data = await getProfileData();
             if (!data) {
-                setProfileData()
+                await setProfileData()
             } else {
                 setSettings(data)
+                await updateStatus()
             }
         };
         fetchData();
@@ -119,6 +120,36 @@ export default function Settings() {
                 // const currentHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
                 // data.avatar_url = settings.avatar_url.replace('localhost', currentHost);    
                 setSettings(data)
+                const resp = await response.json();
+                console.log('ok :', resp)
+            } else {
+                const errorText = await response.text();
+                console.error('error :', response.status, errorText);
+            }
+        } catch (error) {
+            console.error('error: ', error);
+        }
+    }
+
+    const updateStatus = async () => {
+        const token = await getToken()
+        const payload = await getTokenPayload()
+        try {
+            const newData = {
+                is_online: true,
+            }
+            const response = await fetch(`/api/profiles/${payload.user_id}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,       
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newData),
+                credentials: 'include',
+            });
+
+            if (response.ok) {
+
                 const resp = await response.json();
                 console.log('ok :', resp)
             } else {

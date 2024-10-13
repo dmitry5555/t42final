@@ -131,6 +131,8 @@ export const closeUserGame = async (roomId: number, status: string, score1: numb
         const data = {
             status: status,
             user_one_score: score1,
+
+            
             user_two_score: score2,
         }
         const response = await fetch(`/api/games/${roomId}/`, {
@@ -144,7 +146,8 @@ export const closeUserGame = async (roomId: number, status: string, score1: numb
         });
         if (response.ok) {
             const resp = await response.json();
-            console.log('patch resp ok: ', resp)
+            console.log('closing game data [ok]: ', data)
+            console.log('closing game response: ', resp)
             // return true
         } else {
             console.log('patch resp error : ', response)

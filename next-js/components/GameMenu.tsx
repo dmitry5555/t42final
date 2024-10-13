@@ -3,15 +3,15 @@
 import { getToken, getTokenPayload, unsetToken } from "@/actions/db";
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { init } from "./text3D";
 
 const My3DTextComponent: React.FC<{
     onClick?: () => void;
     containerId: React.RefObject<HTMLCanvasElement>;
-    // text: string;
+    // token: boolean;
     // url: string;
-}> = ({ onClick, containerId }) => {
+}> = ({ onClick, containerId}) => {
 
     const removeCanvas = () => {
         const canvasElement = containerId.current;
@@ -21,8 +21,11 @@ const My3DTextComponent: React.FC<{
     };
 
     useEffect(() => {
-        if (containerId.current) {
+        if (containerId.current ) {
             init(containerId.current); // เรียกฟังก์ชันการเริ่มต้น
+        }else
+        {
+            removeCanvas();
         }
     }, [containerId]);
     
@@ -43,14 +46,17 @@ const My3DTextComponent: React.FC<{
 };
 
 export default function GameMenu() {
+	const [have3D, setHave3D] = useState<boolean>(true)
 
     const containerId = useRef<HTMLCanvasElement | null>(null);
     const router = useRouter()
 	const checkToken = async () => {
         const token = await getToken()
         const payload = await getTokenPayload()
-        if (!token || !payload)
+        if (!token || !payload) {
+            setHave3D(false)
             router.push('/signup')
+        }
 	}
 
 	useEffect(() => {
@@ -99,6 +105,8 @@ export default function GameMenu() {
     }
 
     return (
-        <My3DTextComponent containerId={containerId} onClick={unsetTok}/>
+        <>
+            {have3D && <My3DTextComponent containerId={containerId} onClick={unsetTok}/> }
+        </>
     )
 }

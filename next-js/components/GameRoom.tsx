@@ -291,6 +291,7 @@ function GameRoom({mode, players, scoresUpdate}: {mode: number, players: any, sc
 					setVelocityY(move_y);
 				}
 				if (bscore1 == 5 || bscore2 == 5) {
+					console.log('closing game. bscore1, bscore2, score1, score2 : ', bscore1, bscore2, score1, score2)
 					closeUserGame(roomId, 'finished', bscore1, score2)
 					// проброс счета в родитель для отображения результатов
 					scoresUpdate(bscore1, bscore2);
